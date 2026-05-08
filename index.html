@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY BOOK SELF | Personal Library</title>
+    <meta name="description" content="A premium, interactive bookshelf to track your reading journey and organize your book collection.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">MY BOOK <span>SELF</span></div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Find a book...">
+            </div>
+        </header>
+
+
+        <main id="bookGrid" class="book-grid">
+            <!-- Books will be injected here by JS -->
+        </main>
+    </div>
+
+    <!-- Add Book Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content glass">
+            <h2 style="margin-bottom: 1.5rem;">Add New Book</h2>
+            <form id="addBookForm">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="bookTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Author</label>
+                    <input type="text" id="bookAuthor" required>
+                </div>
+                <div class="form-group">
+                    <label>Cover Image URL (Optional)</label>
+                    <input type="url" id="bookCover" placeholder="https://example.com/cover.jpg">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn-add" style="flex: 1;">Save Book</button>
+                    <button type="button" class="btn-add" id="closeModalBtn" style="flex: 1; background: transparent; border: 1px solid var(--glass-border);">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
