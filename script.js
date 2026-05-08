@@ -1,38 +1,20 @@
-// ─── Default Books ───
-const defaultBooks = [
+// ─── Books Data ───
+const books = [
     {
-        id: 4, title: "THAT ONE DAY", author: "Personal Collection",
+        id: 4,
+        title: "THAT ONE DAY",
+        author: "Personal Collection",
         cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
-        status: "reading", rating: 4,
+        status: "reading",
+        rating: 4,
         flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html"
     }
 ];
 
-// ─── State ───
-let books = JSON.parse(localStorage.getItem('myBookshelf_v2')) || defaultBooks;
-// Migrate old data
-if (!localStorage.getItem('myBookshelf_v2') && localStorage.getItem('myBookshelf')) {
-    const old = JSON.parse(localStorage.getItem('myBookshelf'));
-    books = old.map(b => ({ ...b, rating: b.rating || 0 }));
-}
-let currentFilter = 'all';
-let selectedRating = 0;
-
 // ─── DOM ───
-const bookGrid = document.getElementById('bookGrid');
+const bookGrid   = document.getElementById('bookGrid');
 const searchInput = document.getElementById('searchInput');
-const emptyState = document.getElementById('emptyState');
-const modalOverlay = document.getElementById('modalOverlay');
-const addBookForm = document.getElementById('addBookForm');
-const filterBar = document.getElementById('filterBar');
-
-// ─── Stats ───
-function updateStats() {
-    document.getElementById('statTotal').textContent = books.length;
-    document.getElementById('statReading').textContent = books.filter(b => b.status === 'reading').length;
-    document.getElementById('statFinished').textContent = books.filter(b => b.status === 'finished').length;
-    document.getElementById('statWant').textContent = books.filter(b => b.status === 'want').length;
-}
+const emptyState  = document.getElementById('emptyState');
 
 // ─── Stars HTML ───
 function starsHTML(rating) {
@@ -43,15 +25,15 @@ function starsHTML(rating) {
     return s;
 }
 
-// ─── Render ───
+// ─── Render Books ───
 function renderBooks() {
     bookGrid.innerHTML = '';
     const term = searchInput.value.toLowerCase();
-    const filtered = books.filter(b => {
-        const matchesSearch = b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term);
-        const matchesFilter = currentFilter === 'all' || b.status === currentFilter;
-        return matchesSearch && matchesFilter;
-    });
+
+    const filtered = books.filter(b =>
+        b.title.toLowerCase().includes(term) ||
+        b.author.toLowerCase().includes(term)
+    );
 
     if (filtered.length === 0) {
         emptyState.style.display = 'block';
@@ -64,15 +46,16 @@ function renderBooks() {
         card.className = 'book-card';
         card.style.animationDelay = `${i * 0.06}s`;
 
-        const coverSrc = book.cover || 'https://via.placeholder.com/300x450/1a1a2e/c9a84c?text=No+Cover';
-        const tagClass = `tag-${book.status}`;
-        const statusText = book.status === 'reading' ? '📖 Reading' : book.status === 'finished' ? '✅ Done' : '💫 Wishlist';
+        const coverSrc = book.cover || 'https://via.placeholder.com/300x450/ede9e0/9d9ab5?text=No+Cover';
+        const tagClass  = `tag-${book.status}`;
+        const statusText =
+            book.status === 'reading'  ? '📖 Reading'  :
+            book.status === 'finished' ? '✅ Done'     : '💫 Wishlist';
 
         card.innerHTML = `
             <div class="book-cover-wrap">
                 <img src="${coverSrc}" alt="${book.title}" loading="lazy">
                 <span class="book-status-tag ${tagClass}">${statusText}</span>
-
             </div>
             <div class="card-info">
                 <div class="book-stars">${starsHTML(book.rating || 0)}</div>
@@ -80,21 +63,13 @@ function renderBooks() {
                 <p class="card-author">${book.author}</p>
                 <div class="card-actions">
                     <button class="btn-read" onclick="event.stopPropagation();openReader('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}','${book.flipbookUrl || ''}')">Read</button>
-                    <button class="btn-buy" onclick="event.stopPropagation();openCheckout('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}')">Buy</button>
+                    <button class="btn-buy"  onclick="event.stopPropagation();openCheckout('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}')">Buy</button>
                 </div>
             </div>
         `;
         bookGrid.appendChild(card);
     });
 }
-
-function saveBooks() {
-    localStorage.setItem('myBookshelf_v2', JSON.stringify(books));
-    updateStats();
-    renderBooks();
-}
-
-
 
 // ─── Navigation ───
 function openReader(title, author, flipbookUrl) {
@@ -108,80 +83,5 @@ function openCheckout(title, author) {
 // ─── Search ───
 searchInput.addEventListener('input', renderBooks);
 
-// ─── Filter Tabs ───
-filterBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('.filter-btn');
-    if (!btn) return;
-    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    renderBooks();
-});
-
-// ─── Modal ───
-function openModal() { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-function closeModal() {
-    modalOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-    addBookForm.reset();
-    selectedRating = 0;
-    document.querySelectorAll('#starInput .star').forEach(s => s.classList.remove('lit'));
-}
-
-document.getElementById('openModalBtn').addEventListener('click', openModal);
-document.getElementById('fabBtn').addEventListener('click', openModal);
-document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
-
-// ─── Star Rating Input ───
-document.querySelectorAll('#starInput .star').forEach(star => {
-    star.addEventListener('click', () => {
-        selectedRating = parseInt(star.dataset.val);
-        document.getElementById('bookRating').value = selectedRating;
-        document.querySelectorAll('#starInput .star').forEach((s, i) => {
-            s.classList.toggle('lit', i < selectedRating);
-        });
-    });
-    star.addEventListener('mouseenter', () => {
-        const val = parseInt(star.dataset.val);
-        document.querySelectorAll('#starInput .star').forEach((s, i) => {
-            s.classList.toggle('lit', i < val);
-        });
-    });
-});
-document.getElementById('starInput').addEventListener('mouseleave', () => {
-    document.querySelectorAll('#starInput .star').forEach((s, i) => {
-        s.classList.toggle('lit', i < selectedRating);
-    });
-});
-
-// ─── Add Book Form ───
-addBookForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('bookTitle').value.trim();
-    const author = document.getElementById('bookAuthor').value.trim();
-    const cover = document.getElementById('bookCover').value.trim();
-    const status = document.querySelector('input[name="bookStatus"]:checked').value;
-    const rating = parseInt(document.getElementById('bookRating').value) || 0;
-
-    const newBook = {
-        id: Date.now(),
-        title, author,
-        cover: cover || '',
-        status, rating
-    };
-    books.unshift(newBook);
-    saveBooks();
-    closeModal();
-});
-
-// ─── Keyboard ───
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
-});
-
 // ─── Init ───
-updateStats();
 renderBooks();
-
