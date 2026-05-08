@@ -2,8 +2,13 @@
 
 A premium, interactive personal library app to browse, read, and buy your favourite books — built with HTML, CSS & JavaScript.
 
+---
+
 ## 🌐 Live Site
-👉 **[Open MY BOOK SELF](https://alpinetxt.github.io/my-bookself/)**
+
+## 👉 [https://alpinetxt.github.io/my-bookself/](https://alpinetxt.github.io/my-bookself/)
+
+---
 
 ## Features
 - 📖 Beautiful book gallery with cover art
