@@ -28,7 +28,7 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput" placeholder="Search title or author...">
             </div>
-            <button class="nav-add-btn" id="openModalBtn">+ Add Book</button>
+
         </div>
     </nav>
 
@@ -72,9 +72,6 @@
         <div class="container">
             <div class="filters" id="filterBar">
                 <button class="filter-btn active" data-filter="all">All Books</button>
-                <button class="filter-btn" data-filter="reading">📖 Reading</button>
-                <button class="filter-btn" data-filter="finished">✅ Finished</button>
-                <button class="filter-btn" data-filter="want">💫 Wishlist</button>
             </div>
         </div>
     </section>
@@ -87,71 +84,15 @@
         <div class="empty-state" id="emptyState" style="display:none;">
             <div class="empty-icon">📭</div>
             <h3>No books here yet</h3>
-            <p>Add your first book to get started on your reading journey.</p>
-            <button class="btn-add-empty" onclick="document.getElementById('openModalBtn').click()">+ Add Your First Book</button>
+            <p>Your shelf is empty.</p>
         </div>
     </main>
 
-    <!-- Floating Add Button (mobile) -->
-    <button class="fab" id="fabBtn" title="Add Book">+</button>
 
-    <!-- Add Book Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content">
-            <button class="modal-close" id="closeModalBtn">✕</button>
-            <div class="modal-header">
-                <span class="modal-icon">📖</span>
-                <h2>Add a New Book</h2>
-                <p>Track what you're reading or want to read</p>
-            </div>
-            <form id="addBookForm">
-                <div class="form-group">
-                    <label for="bookTitle">Book Title <span class="required">*</span></label>
-                    <input type="text" id="bookTitle" placeholder="e.g. The Midnight Library" required>
-                </div>
-                <div class="form-group">
-                    <label for="bookAuthor">Author <span class="required">*</span></label>
-                    <input type="text" id="bookAuthor" placeholder="e.g. Matt Haig" required>
-                </div>
-                <div class="form-group">
-                    <label for="bookCover">Cover Image URL <span class="optional">(optional)</span></label>
-                    <input type="url" id="bookCover" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Reading Status</label>
-                    <div class="status-selector">
-                        <label class="status-option">
-                            <input type="radio" name="bookStatus" value="want" checked>
-                            <span class="status-label-btn">💫 Wishlist</span>
-                        </label>
-                        <label class="status-option">
-                            <input type="radio" name="bookStatus" value="reading">
-                            <span class="status-label-btn">📖 Reading</span>
-                        </label>
-                        <label class="status-option">
-                            <input type="radio" name="bookStatus" value="finished">
-                            <span class="status-label-btn">✅ Finished</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="bookRating">Rating</label>
-                    <div class="star-input" id="starInput">
-                        <span class="star" data-val="1">★</span>
-                        <span class="star" data-val="2">★</span>
-                        <span class="star" data-val="3">★</span>
-                        <span class="star" data-val="4">★</span>
-                        <span class="star" data-val="5">★</span>
-                    </div>
-                    <input type="hidden" id="bookRating" value="0">
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
-                    <button type="submit" class="btn-save">Save to Shelf</button>
-                </div>
-            </form>
-        </div>
-    </div>
+
+    <!-- Modal placeholder (removed) -->
+    <div id="modalOverlay" style="display:none;"></div>
+    <form id="addBookForm" style="display:none;"></form>
 
     <!-- Book Detail Drawer -->
     <div class="drawer-overlay" id="drawerOverlay">
@@ -168,3 +109,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
