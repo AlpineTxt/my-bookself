@@ -72,7 +72,7 @@ function renderBooks() {
             <div class="book-cover-wrap">
                 <img src="${coverSrc}" alt="${book.title}" loading="lazy">
                 <span class="book-status-tag ${tagClass}">${statusText}</span>
-                <button class="btn-del" onclick="event.stopPropagation();deleteBook(${book.id})" title="Remove">✕</button>
+
             </div>
             <div class="card-info">
                 <div class="book-stars">${starsHTML(book.rating || 0)}</div>
@@ -94,12 +94,7 @@ function saveBooks() {
     renderBooks();
 }
 
-function deleteBook(id) {
-    if (confirm('Remove this book from your shelf?')) {
-        books = books.filter(b => b.id !== id);
-        saveBooks();
-    }
-}
+
 
 // ─── Navigation ───
 function openReader(title, author, flipbookUrl) {
@@ -189,3 +184,4 @@ document.addEventListener('keydown', (e) => {
 // ─── Init ───
 updateStats();
 renderBooks();
+
