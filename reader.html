@@ -9,601 +9,316 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #0f0f14; --surface: #1a1a22; --border: rgba(255,255,255,0.08);
-            --accent: #c9a84c; --accent-glow: rgba(201,168,76,0.25);
-            --text: #f0ece2; --text-dim: rgba(240,236,226,0.5);
+            --bg: #0f0f14;
+            --surface: #1a1a22;
+            --border: rgba(255,255,255,0.08);
+            --accent: #c9a84c;
+            --accent-glow: rgba(201,168,76,0.25);
+            --text: #f0ece2;
+            --text-dim: rgba(240,236,226,0.5);
         }
-        body {
+
+        html, body {
+            height: 100%; width: 100%;
+            overflow: hidden;
             font-family: 'Inter', system-ui, sans-serif;
-            background: var(--bg); color: var(--text);
-            height: 100vh; overflow: hidden;
-            display: flex; flex-direction: column;
-            user-select: none; -webkit-user-select: none;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* ── Layout ── */
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
         }
 
         /* ── Top Bar ── */
         .topbar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0.6rem 1.2rem; background: var(--surface);
-            border-bottom: 1px solid var(--border); z-index: 50; flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 1.2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            flex-shrink: 0;
+            gap: 1rem;
         }
-        .topbar-left { display: flex; align-items: center; gap: 1rem; }
+        .topbar-left { display: flex; align-items: center; gap: 0.9rem; }
         .back-btn {
-            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-            color: var(--text); padding: 0.4rem 1rem; border-radius: 8px;
-            cursor: pointer; font-size: 0.8rem; font-weight: 600;
-            transition: all 0.2s; text-decoration: none; font-family: inherit;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.38rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: border-color 0.2s, color 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+            white-space: nowrap;
         }
         .back-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .topbar-title { font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; }
-        .topbar-right { display: flex; align-items: center; gap: 0.8rem; }
-        .page-indicator {
-            font-size: 0.78rem; color: var(--text-dim);
-            background: rgba(255,255,255,0.04); padding: 0.3rem 0.8rem;
-            border-radius: 6px; font-weight: 500;
+
+        .topbar-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 280px;
         }
+        .topbar-badge {
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.22rem 0.65rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
+            border: 1px solid rgba(201,168,76,0.3);
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0; }
+
         .tool-btn {
-            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-            color: var(--text-dim); width: 34px; height: 34px; border-radius: 8px;
-            cursor: pointer; font-size: 1rem; display: flex; align-items: center;
-            justify-content: center; transition: all 0.2s;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
         }
         .tool-btn:hover { color: var(--accent); border-color: var(--accent); }
-        .tool-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-
-        /* ── Stage ── */
-        .reader-stage {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-            background: radial-gradient(ellipse at center, #1a1a24 0%, var(--bg) 70%);
+        .tool-btn.active {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
         }
 
-        /* ── Book Container ── */
-        .book-container {
-            position: relative; display: flex;
-            perspective: 2500px;
-            transform-origin: center center;
-            transition: transform 0.3s ease;
-        }
-        .book-container.zoomed { transform: scale(1.4); }
-
-        .page-panel {
+        /* ── Flipbook Frame ── */
+        .flipbook-stage {
+            flex: 1;
             position: relative;
-            width: min(45vw, 480px); height: min(80vh, 680px);
-            overflow: hidden; background: #fff;
-        }
-        .page-panel.left {
-            border-radius: 4px 0 0 4px;
-            box-shadow: inset -8px 0 20px rgba(0,0,0,0.15), -5px 5px 30px rgba(0,0,0,0.4);
-        }
-        .page-panel.right {
-            border-radius: 0 4px 4px 0;
-            box-shadow: inset 8px 0 20px rgba(0,0,0,0.15), 5px 5px 30px rgba(0,0,0,0.4);
-        }
-        .page-panel canvas {
-            width: 100%; height: 100%; display: block;
+            background: var(--bg);
+            overflow: hidden;
         }
 
-        /* Spine */
-        .book-spine {
-            width: 10px; flex-shrink: 0;
-            background: linear-gradient(90deg, #1a1a1a, #333, #1a1a1a);
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
-            z-index: 5;
+        #flipbookFrame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
-        /* Page curl shadows */
-        .page-panel.left::after {
-            content: ''; position: absolute; top: 0; right: 0;
-            width: 40px; height: 100%;
-            background: linear-gradient(to left, rgba(0,0,0,0.08), transparent);
-            pointer-events: none;
+        /* ── Loading Splash ── */
+        .frame-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.4rem;
+            background: var(--bg);
+            z-index: 10;
+            transition: opacity 0.5s ease;
         }
-        .page-panel.right::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 40px; height: 100%; z-index: 2;
-            background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
-            pointer-events: none;
+        .frame-loader.hidden { opacity: 0; pointer-events: none; }
+
+        .loader-book {
+            font-size: 3.5rem;
+            animation: float 2s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* ── Flip Animation Layer ── */
-        .flip-page {
-            position: absolute; top: 0; width: 100%; height: 100%;
-            transform-origin: left center; transform-style: preserve-3d;
-            z-index: 20; pointer-events: none; backface-visibility: hidden;
-        }
-        .flip-page canvas { width: 100%; height: 100%; display: block; }
-        .flip-page .flip-back {
-            position: absolute; inset: 0; backface-visibility: hidden;
-            transform: rotateY(180deg); overflow: hidden;
-        }
-        .flip-page .flip-back canvas { width: 100%; height: 100%; display: block; }
-        .flip-page .flip-shadow {
-            position: absolute; top: 0; right: 0; width: 100%; height: 100%;
-            background: linear-gradient(to left, rgba(0,0,0,0.3) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        /* ── Click Zones ── */
-        .click-zone {
-            position: absolute; top: 0; height: 100%; z-index: 15;
-            cursor: pointer; opacity: 0; transition: opacity 0.2s;
-        }
-        .click-zone:hover { opacity: 1; }
-        .click-zone.prev-zone {
-            left: 0; width: 25%;
-            background: linear-gradient(to right, rgba(201,168,76,0.06), transparent);
-        }
-        .click-zone.next-zone {
-            right: 0; width: 25%;
-            background: linear-gradient(to left, rgba(201,168,76,0.06), transparent);
-        }
-
-        /* ── Bottom Bar ── */
-        .bottombar {
-            display: flex; align-items: center; gap: 1rem;
-            padding: 0.7rem 1.5rem; background: var(--surface);
-            border-top: 1px solid var(--border); flex-shrink: 0;
-        }
-        .nav-btn {
-            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-            color: var(--text); padding: 0.5rem 1.5rem; border-radius: 10px;
-            font-weight: 600; font-size: 0.82rem; cursor: pointer;
-            transition: all 0.2s; font-family: inherit;
-        }
-        .nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-        .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
-
-        .page-slider {
-            flex: 1; -webkit-appearance: none; appearance: none;
-            height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;
-            outline: none; cursor: pointer;
-        }
-        .page-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 16px; height: 16px;
-            background: var(--accent); border-radius: 50%; cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-        .page-slider::-moz-range-thumb {
-            width: 16px; height: 16px; background: var(--accent);
-            border-radius: 50%; border: none; cursor: pointer;
-        }
-
-        /* ── Thumbnails Sidebar ── */
-        .thumb-sidebar {
-            position: absolute; top: 0; right: 0; bottom: 0; width: 180px;
-            background: var(--surface); border-left: 1px solid var(--border);
-            z-index: 40; overflow-y: auto; padding: 0.8rem;
-            transform: translateX(100%); transition: transform 0.3s ease;
-        }
-        .thumb-sidebar.open { transform: translateX(0); }
-        .thumb-sidebar h4 {
-            font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 0.8rem;
-        }
-        .thumb-item {
-            width: 100%; aspect-ratio: 3/4; background: #fff;
-            border-radius: 6px; margin-bottom: 0.6rem; cursor: pointer;
-            border: 2px solid transparent; overflow: hidden;
-            transition: all 0.2s; position: relative;
-        }
-        .thumb-item canvas { width: 100%; height: 100%; display: block; }
-        .thumb-item:hover { border-color: rgba(255,255,255,0.2); }
-        .thumb-item.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-        .thumb-num {
-            position: absolute; bottom: 4px; right: 6px;
-            font-size: 0.65rem; color: var(--text-dim); font-weight: 600;
-            background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 3px;
-        }
-
-        /* ── Loading ── */
-        .loading-overlay {
-            position: fixed; inset: 0; background: var(--bg);
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; z-index: 999; gap: 1.5rem;
-        }
         .loader-ring {
-            width: 48px; height: 48px; border: 3px solid var(--border);
-            border-top-color: var(--accent); border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            width: 44px; height: 44px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { color: var(--text-dim); font-size: 0.9rem; }
-        .loading-progress {
-            width: 200px; height: 3px; background: var(--border);
-            border-radius: 2px; overflow: hidden;
+
+        .loader-text {
+            color: var(--text-dim);
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
-        .loading-progress-bar {
-            height: 100%; background: var(--accent); width: 0%;
-            transition: width 0.3s; border-radius: 2px;
+        .loader-subtext {
+            color: rgba(240,236,226,0.3);
+            font-size: 0.72rem;
+            margin-top: -0.8rem;
         }
+
+        /* ── Fallback Banner ── */
+        .fallback-banner {
+            display: none;
+            position: absolute;
+            inset: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            background: var(--bg);
+            z-index: 20;
+            padding: 2rem;
+            text-align: center;
+        }
+        .fallback-banner.show { display: flex; }
+        .fallback-banner h3 { font-size: 1.1rem; color: var(--text); }
+        .fallback-banner p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; max-width: 360px; }
+        .open-external-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            background: linear-gradient(135deg, var(--accent), #e8c46a);
+            color: #0f0f14;
+            border: none; border-radius: 10px;
+            font-weight: 700; font-size: 0.85rem;
+            cursor: pointer; text-decoration: none;
+            font-family: inherit;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .open-external-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
         /* ── Mobile ── */
-        @media (max-width: 768px) {
-            .page-panel {
-                width: min(92vw, 400px); height: min(65vh, 550px);
-            }
-            .page-panel.left { display: none; }
-            .book-spine { display: none; }
-            .page-panel.right {
-                border-radius: 8px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            }
-            .page-panel.right::before { display: none; }
-            .topbar-title { font-size: 0.78rem; max-width: 120px; overflow: hidden;
-                text-overflow: ellipsis; white-space: nowrap; }
-            .tool-btn { width: 30px; height: 30px; font-size: 0.85rem; }
-            .thumb-sidebar { width: 140px; }
-            .bottombar { padding: 0.5rem 1rem; }
-            .nav-btn { padding: 0.4rem 1rem; font-size: 0.75rem; }
-        }
-
         @media (max-width: 480px) {
-            .topbar { padding: 0.5rem 0.8rem; }
-            .topbar-right { gap: 0.4rem; }
-            .page-indicator { font-size: 0.7rem; padding: 0.2rem 0.6rem; }
+            .topbar { padding: 0.45rem 0.8rem; gap: 0.6rem; }
+            .topbar-title { font-size: 0.78rem; max-width: 160px; }
+            .topbar-badge { display: none; }
+            .tool-btn { width: 30px; height: 30px; font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Loading -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader-ring"></div>
-        <p class="loading-text">Opening your book...</p>
-        <div class="loading-progress"><div class="loading-progress-bar" id="progressBar"></div></div>
-    </div>
+<div class="app-shell">
 
     <!-- Top Bar -->
     <div class="topbar">
         <div class="topbar-left">
-            <a href="index.html" class="back-btn">← Back</a>
+            <a href="index.html" class="back-btn" id="backBtn">← Back</a>
             <span class="topbar-title" id="topbarTitle">Book</span>
+            <span class="topbar-badge">✦ Flipbook</span>
         </div>
         <div class="topbar-right">
-            <span class="page-indicator" id="pageIndicator">–</span>
-            <button class="tool-btn" id="zoomBtn" title="Zoom">🔍</button>
-            <button class="tool-btn" id="thumbBtn" title="Pages">☰</button>
             <button class="tool-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+            <a class="tool-btn" id="externalBtn" title="Open in new tab" target="_blank" rel="noopener">↗</a>
         </div>
     </div>
 
-    <!-- Reader Stage -->
-    <div class="reader-stage" id="readerStage">
-        <div class="book-container" id="bookContainer">
-            <!-- Left Page -->
-            <div class="page-panel left" id="leftPanel">
-                <canvas id="leftCanvas"></canvas>
-                <div class="click-zone prev-zone" id="prevZoneL"></div>
-            </div>
-            <!-- Spine -->
-            <div class="book-spine"></div>
-            <!-- Right Page -->
-            <div class="page-panel right" id="rightPanel">
-                <canvas id="rightCanvas"></canvas>
-                <div class="click-zone prev-zone" id="prevZoneR"></div>
-                <div class="click-zone next-zone" id="nextZoneR"></div>
-                <!-- Flip animation layer -->
-                <div class="flip-page" id="flipPage" style="display:none;">
-                    <canvas id="flipFrontCanvas"></canvas>
-                    <div class="flip-shadow"></div>
-                    <div class="flip-back">
-                        <canvas id="flipBackCanvas"></canvas>
-                    </div>
-                </div>
-            </div>
+    <!-- Flipbook Stage -->
+    <div class="flipbook-stage" id="flipbookStage">
+
+        <!-- Loading Splash -->
+        <div class="frame-loader" id="frameLoader">
+            <div class="loader-book">📖</div>
+            <div class="loader-ring"></div>
+            <p class="loader-text">Opening your flipbook…</p>
+            <p class="loader-subtext">Powered by HeyZine</p>
         </div>
 
-        <!-- Thumbnails Sidebar -->
-        <div class="thumb-sidebar" id="thumbSidebar">
-            <h4>Pages</h4>
-            <div id="thumbList"></div>
+        <!-- Fallback (shown if iframe blocked) -->
+        <div class="fallback-banner" id="fallbackBanner">
+            <div style="font-size:2.5rem">📚</div>
+            <h3>Open Flipbook</h3>
+            <p>Your browser has blocked the embedded flipbook. Click below to read it in a new tab for the best experience.</p>
+            <a class="open-external-btn" id="fallbackLink" href="#" target="_blank" rel="noopener">
+                🔗 Open Flipbook
+            </a>
         </div>
+
+        <!-- HeyZine iframe -->
+        <iframe
+            id="flipbookFrame"
+            title="Book Flipbook"
+            allowfullscreen
+            allow="fullscreen"
+            loading="eager"
+        ></iframe>
+
     </div>
+</div>
 
-    <!-- Bottom Bar -->
-    <div class="bottombar">
-        <button class="nav-btn" id="prevBtn">◀ Prev</button>
-        <input type="range" class="page-slider" id="pageSlider" min="1" max="1" value="1">
-        <button class="nav-btn" id="nextBtn">Next ▶</button>
-    </div>
+<script>
+    // ── Read URL params ──
+    const params = new URLSearchParams(window.location.search);
+    const title   = decodeURIComponent(params.get('title')  || 'Book');
+    const author  = decodeURIComponent(params.get('author') || '');
+    const flipUrl = decodeURIComponent(params.get('flip')   || 'https://heyzine.com/flip-book/05d20dcb10.html');
 
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    // ── Populate topbar ──
+    document.getElementById('topbarTitle').textContent = title + (author ? ` — ${author}` : '');
+    document.title = `${title} | MY BOOK SELF`;
 
-        // ─── State ───
-        let pdfDoc = null, totalPages = 0, currentSpread = 1, isFlipping = false;
-        const isMobile = window.innerWidth <= 768;
+    // ── Set external link ──
+    document.getElementById('externalBtn').href = flipUrl;
+    document.getElementById('fallbackLink').href = flipUrl;
 
-        // ─── DOM ───
-        const leftCanvas = document.getElementById('leftCanvas');
-        const rightCanvas = document.getElementById('rightCanvas');
-        const flipPage = document.getElementById('flipPage');
-        const flipFrontCanvas = document.getElementById('flipFrontCanvas');
-        const flipBackCanvas = document.getElementById('flipBackCanvas');
-        const pageIndicator = document.getElementById('pageIndicator');
-        const pageSlider = document.getElementById('pageSlider');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const bookContainer = document.getElementById('bookContainer');
+    // ── Load iframe ──
+    const frame  = document.getElementById('flipbookFrame');
+    const loader = document.getElementById('frameLoader');
+    const fallback = document.getElementById('fallbackBanner');
 
-        // ─── Render a page to canvas ───
-        async function renderPage(pageNum, canvas) {
-            if (!pdfDoc || pageNum < 1 || pageNum > totalPages) {
-                const ctx = canvas.getContext('2d');
-                canvas.width = 480; canvas.height = 680;
-                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 480, 680);
-                return;
-            }
-            const page = await pdfDoc.getPage(pageNum);
-            const container = canvas.parentElement;
-            const vp0 = page.getViewport({ scale: 1 });
-            const targetH = container.clientHeight || 680;
-            const scale = targetH / vp0.height;
-            const viewport = page.getViewport({ scale });
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    frame.src = flipUrl;
+
+    // Hide loader when frame loads
+    frame.addEventListener('load', () => {
+        setTimeout(() => loader.classList.add('hidden'), 600);
+    });
+
+    // Safety timeout — if frame didn't fire load in 12s, show fallback hint
+    const safetyTimer = setTimeout(() => {
+        // Only show fallback if loader is still visible
+        if (!loader.classList.contains('hidden')) {
+            loader.classList.add('hidden');
+            fallback.classList.add('show');
         }
+    }, 12000);
 
-        // ─── Show spread ───
-        async function showSpread(leftNum) {
-            if (isMobile) {
-                // Single page mode
-                await renderPage(leftNum, rightCanvas);
-                pageIndicator.textContent = `${leftNum} / ${totalPages}`;
-            } else {
-                const rightNum = leftNum + 1;
-                await Promise.all([
-                    renderPage(leftNum, leftCanvas),
-                    renderPage(rightNum, rightCanvas)
-                ]);
-                const rn = Math.min(leftNum + 1, totalPages);
-                pageIndicator.textContent = `${leftNum}–${rn} / ${totalPages}`;
-            }
-            const step = isMobile ? 1 : 2;
-            prevBtn.disabled = leftNum <= 1;
-            nextBtn.disabled = leftNum + step > totalPages;
-            pageSlider.value = leftNum;
-            updateThumbActive();
+    frame.addEventListener('load', () => clearTimeout(safetyTimer));
+
+    // ── Fullscreen ──
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        const stage = document.getElementById('flipbookStage');
+        if (!document.fullscreenElement) {
+            (stage.requestFullscreen || stage.webkitRequestFullscreen).call(stage);
+        } else {
+            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
         }
+    });
 
-        // ─── Page Flip Animation ───
-        async function flipForward() {
-            const step = isMobile ? 1 : 2;
-            if (isFlipping || currentSpread + step > totalPages) return;
-            isFlipping = true;
-            const nextLeft = currentSpread + step;
+    document.addEventListener('fullscreenchange', () => {
+        const btn = document.getElementById('fullscreenBtn');
+        btn.classList.toggle('active', !!document.fullscreenElement);
+        btn.title = document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen';
+    });
 
-            if (!isMobile) {
-                // Render flip canvases
-                flipPage.style.display = 'block';
-                await renderPage(currentSpread + 1, flipFrontCanvas);
-                await renderPage(nextLeft, flipBackCanvas);
-
-                // Animate
-                let start = null;
-                const duration = 600;
-                function animate(ts) {
-                    if (!start) start = ts;
-                    const elapsed = ts - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-                    const angle = eased * -180;
-                    flipPage.style.transform = `rotateY(${angle}deg)`;
-                    if (progress < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        flipPage.style.display = 'none';
-                        flipPage.style.transform = '';
-                        currentSpread = nextLeft;
-                        showSpread(currentSpread);
-                        isFlipping = false;
-                    }
-                }
-                requestAnimationFrame(animate);
-            } else {
-                // Mobile: simple slide
-                const panel = document.getElementById('rightPanel');
-                panel.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-                panel.style.transform = 'translateX(-30px)';
-                panel.style.opacity = '0.5';
-                await new Promise(r => setTimeout(r, 150));
-                currentSpread = nextLeft;
-                await showSpread(currentSpread);
-                panel.style.transform = 'translateX(30px)';
-                await new Promise(r => setTimeout(r, 50));
-                panel.style.transform = 'translateX(0)';
-                panel.style.opacity = '1';
-                setTimeout(() => { panel.style.transition = ''; isFlipping = false; }, 300);
-            }
+    // ── Keyboard shortcuts ──
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.fullscreenElement) {
+            window.location.href = 'index.html';
         }
-
-        async function flipBackward() {
-            const step = isMobile ? 1 : 2;
-            if (isFlipping || currentSpread <= 1) return;
-            isFlipping = true;
-            const prevLeft = currentSpread - step;
-
-            if (!isMobile) {
-                flipPage.style.display = 'block';
-                flipPage.style.transform = 'rotateY(-180deg)';
-                await renderPage(prevLeft + 1, flipBackCanvas);
-                await renderPage(currentSpread, flipFrontCanvas);
-
-                let start = null;
-                const duration = 600;
-                function animate(ts) {
-                    if (!start) start = ts;
-                    const elapsed = ts - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    const angle = -180 + eased * 180;
-                    flipPage.style.transform = `rotateY(${angle}deg)`;
-                    if (progress < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        flipPage.style.display = 'none';
-                        flipPage.style.transform = '';
-                        currentSpread = prevLeft;
-                        showSpread(currentSpread);
-                        isFlipping = false;
-                    }
-                }
-                requestAnimationFrame(animate);
-            } else {
-                const panel = document.getElementById('rightPanel');
-                panel.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-                panel.style.transform = 'translateX(30px)';
-                panel.style.opacity = '0.5';
-                await new Promise(r => setTimeout(r, 150));
-                currentSpread = prevLeft;
-                await showSpread(currentSpread);
-                panel.style.transform = 'translateX(-30px)';
-                await new Promise(r => setTimeout(r, 50));
-                panel.style.transform = 'translateX(0)';
-                panel.style.opacity = '1';
-                setTimeout(() => { panel.style.transition = ''; isFlipping = false; }, 300);
-            }
+        if (e.key === 'F11') {
+            e.preventDefault();
+            document.getElementById('fullscreenBtn').click();
         }
+    });
+</script>
 
-        // ─── Controls ───
-        nextBtn.addEventListener('click', flipForward);
-        prevBtn.addEventListener('click', flipBackward);
-        document.getElementById('prevZoneL').addEventListener('click', flipBackward);
-        document.getElementById('prevZoneR').addEventListener('click', flipBackward);
-        document.getElementById('nextZoneR').addEventListener('click', flipForward);
-
-        // Keyboard
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); flipForward(); }
-            if (e.key === 'ArrowLeft') flipBackward();
-            if (e.key === 'Escape') window.location.href = 'index.html';
-        });
-
-        // Slider
-        pageSlider.addEventListener('input', async () => {
-            if (isFlipping) return;
-            let val = parseInt(pageSlider.value);
-            if (!isMobile) val = val % 2 === 0 ? val - 1 : val; // snap to odd
-            currentSpread = Math.max(1, val);
-            await showSpread(currentSpread);
-        });
-
-        // Touch swipe
-        let touchStartX = 0;
-        document.getElementById('readerStage').addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].clientX;
-        }, { passive: true });
-        document.getElementById('readerStage').addEventListener('touchend', (e) => {
-            const diff = touchStartX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) flipForward();
-                else flipBackward();
-            }
-        }, { passive: true });
-
-        // ─── Zoom ───
-        document.getElementById('zoomBtn').addEventListener('click', () => {
-            bookContainer.classList.toggle('zoomed');
-            document.getElementById('zoomBtn').classList.toggle('active');
-        });
-
-        // ─── Fullscreen ───
-        document.getElementById('fullscreenBtn').addEventListener('click', () => {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        });
-
-        // ─── Thumbnails ───
-        const thumbBtn = document.getElementById('thumbBtn');
-        const thumbSidebar = document.getElementById('thumbSidebar');
-        thumbBtn.addEventListener('click', () => {
-            thumbSidebar.classList.toggle('open');
-            thumbBtn.classList.toggle('active');
-        });
-
-        async function buildThumbnails() {
-            const list = document.getElementById('thumbList');
-            list.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const item = document.createElement('div');
-                item.className = 'thumb-item';
-                item.dataset.page = i;
-                const c = document.createElement('canvas');
-                item.appendChild(c);
-                const num = document.createElement('span');
-                num.className = 'thumb-num';
-                num.textContent = i;
-                item.appendChild(num);
-                item.addEventListener('click', async () => {
-                    if (isFlipping) return;
-                    let target = i;
-                    if (!isMobile) target = i % 2 === 0 ? i - 1 : i;
-                    currentSpread = Math.max(1, target);
-                    await showSpread(currentSpread);
-                    thumbSidebar.classList.remove('open');
-                    thumbBtn.classList.remove('active');
-                });
-                list.appendChild(item);
-                // Render thumbnail
-                const page = await pdfDoc.getPage(i);
-                const vp = page.getViewport({ scale: 0.3 });
-                c.width = vp.width; c.height = vp.height;
-                page.render({ canvasContext: c.getContext('2d'), viewport: vp });
-            }
-        }
-
-        function updateThumbActive() {
-            document.querySelectorAll('.thumb-item').forEach(el => {
-                const p = parseInt(el.dataset.page);
-                const step = isMobile ? 1 : 2;
-                el.classList.toggle('active', p >= currentSpread && p < currentSpread + step);
-            });
-        }
-
-        // ─── Load PDF ───
-        async function loadPDF() {
-            const params = new URLSearchParams(window.location.search);
-            const title = params.get('title') || 'THAT ONE DAY';
-            document.getElementById('topbarTitle').textContent = decodeURIComponent(title);
-
-            const pdfPath = 'THAT ONE DAY (english version).pdf';
-            const progressBar = document.getElementById('progressBar');
-
-            try {
-                const loadingTask = pdfjsLib.getDocument(pdfPath);
-                loadingTask.onProgress = (p) => {
-                    if (p.total) progressBar.style.width = Math.min(100, (p.loaded / p.total) * 100) + '%';
-                };
-                pdfDoc = await loadingTask.promise;
-                totalPages = pdfDoc.numPages;
-                progressBar.style.width = '100%';
-
-                pageSlider.max = totalPages;
-                pageSlider.value = 1;
-
-                await showSpread(1);
-                buildThumbnails();
-
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.opacity = '0';
-                    setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 300);
-                }, 400);
-            } catch (e) {
-                document.getElementById('loadingOverlay').innerHTML = `
-                    <p style="color:#e74c5e;text-align:center;max-width:350px;line-height:1.6;">
-                        ⚠️ Could not load the PDF.<br><br>
-                        <span style="font-size:0.8rem;opacity:0.6;">Error: ${e.message}</span>
-                    </p>
-                    <a href="index.html" class="back-btn" style="margin-top:1rem;">← Go Back</a>
-                `;
-            }
-        }
-
-        loadPDF();
-    </script>
 </body>
 </html>
