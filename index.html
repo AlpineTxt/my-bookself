@@ -4,75 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MY BOOK SELF | Personal Library</title>
-    <meta name="description" content="A premium, interactive digital bookshelf to track your reading journey, organize your collection, and discover your next great read.">
+    <meta name="description" content="A personal digital bookshelf — curated reads, all in one place.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Ambient Background -->
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-    <div class="ambient-orb orb-3"></div>
-
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-inner">
-            <div class="nav-logo">
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo">
                 <span class="logo-icon">📚</span>
                 <span class="logo-text">MY BOOK <em>SELF</em></span>
             </div>
-            <div class="nav-search">
+            <div class="search-wrap">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Search title or author...">
+                <input type="text" id="searchInput" placeholder="Search books...">
             </div>
-
         </div>
-    </nav>
+    </header>
 
-
-    <!-- Filter Bar -->
-    <section class="filters-section">
+    <!-- Page Title -->
+    <section class="hero">
         <div class="container">
-            <div class="filters" id="filterBar">
-                <button class="filter-btn active" data-filter="all">All Books</button>
-            </div>
+            <h1 class="hero-title">My Reading Collection</h1>
+            <p class="hero-sub">A curated shelf of books I love, am reading, and want to explore.</p>
         </div>
     </section>
 
     <!-- Book Grid -->
     <main class="container">
-        <div class="book-grid" id="bookGrid">
-            <!-- Books injected by JS -->
-        </div>
+        <div class="book-grid" id="bookGrid"></div>
         <div class="empty-state" id="emptyState" style="display:none;">
             <div class="empty-icon">📭</div>
-            <h3>No books here yet</h3>
-            <p>Your shelf is empty.</p>
+            <h3>No books found</h3>
+            <p>Try a different search term.</p>
         </div>
     </main>
 
-
-
-    <!-- Modal placeholder (removed) -->
-    <div id="modalOverlay" style="display:none;"></div>
-    <form id="addBookForm" style="display:none;"></form>
-
-    <!-- Book Detail Drawer -->
-    <div class="drawer-overlay" id="drawerOverlay">
-        <div class="drawer" id="bookDrawer">
-            <button class="drawer-close" id="closeDrawerBtn">✕</button>
-            <div id="drawerContent"></div>
-        </div>
-    </div>
-
+    <!-- Footer -->
     <footer class="site-footer">
         <p>MY BOOK SELF &nbsp;·&nbsp; Built with ❤️ by <a href="https://github.com/AlpineTxt" target="_blank">AlpineTxt</a></p>
     </footer>
 
+    <!-- Hidden required elements for script compatibility -->
+    <div id="modalOverlay" style="display:none;"></div>
+    <form id="addBookForm" style="display:none;"></form>
+    <div id="filterBar" style="display:none;"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
-
