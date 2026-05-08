@@ -13,7 +13,8 @@ const defaultBooks = [
     {
         id: 4, title: "THAT ONE DAY", author: "Personal Collection",
         cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
-        status: "reading", rating: 4
+        status: "reading", rating: 4,
+        flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html"
     }
 ];
 
@@ -88,7 +89,7 @@ function renderBooks() {
                 <h3 class="card-title">${book.title}</h3>
                 <p class="card-author">${book.author}</p>
                 <div class="card-actions">
-                    <button class="btn-read" onclick="event.stopPropagation();openReader('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}')">Read</button>
+                    <button class="btn-read" onclick="event.stopPropagation();openReader('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}','${book.flipbookUrl || ''}')">Read</button>
                     <button class="btn-buy" onclick="event.stopPropagation();openCheckout('${encodeURIComponent(book.title)}','${encodeURIComponent(book.author)}')">Buy</button>
                 </div>
             </div>
@@ -111,8 +112,9 @@ function deleteBook(id) {
 }
 
 // ─── Navigation ───
-function openReader(title, author) {
-    window.location.href = `reader.html?title=${title}&author=${author}`;
+function openReader(title, author, flipbookUrl) {
+    const flip = flipbookUrl ? `&flip=${encodeURIComponent(flipbookUrl)}` : '';
+    window.location.href = `reader.html?title=${title}&author=${author}${flip}`;
 }
 function openCheckout(title, author) {
     window.location.href = `checkout.html?title=${title}&author=${author}`;
