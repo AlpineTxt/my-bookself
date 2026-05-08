@@ -4,48 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MY BOOK SELF | Personal Library</title>
-    <meta name="description" content="A premium, interactive bookshelf to track your reading journey and organize your book collection.">
+    <meta name="description" content="A premium, interactive digital bookshelf to track your reading journey, organize your collection, and discover your next great read.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">MY BOOK <span>SELF</span></div>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Find a book...">
+
+    <!-- Ambient Background -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <span class="logo-icon">📚</span>
+                <span class="logo-text">MY BOOK <em>SELF</em></span>
             </div>
-        </header>
+            <div class="nav-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search title or author...">
+            </div>
+            <button class="nav-add-btn" id="openModalBtn">+ Add Book</button>
+        </div>
+    </nav>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-eyebrow">Your Personal Library</p>
+            <h1 class="hero-title">Books that shape<br><em>who you are</em></h1>
+            <p class="hero-subtitle">Track your reading journey, curate your collection,<br>and rediscover the joy of reading.</p>
+            <div class="hero-stats" id="heroStats">
+                <div class="stat-pill">
+                    <span class="stat-num" id="statTotal">0</span>
+                    <span class="stat-label">Total Books</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-pill">
+                    <span class="stat-num" id="statReading">0</span>
+                    <span class="stat-label">Reading Now</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-pill">
+                    <span class="stat-num" id="statFinished">0</span>
+                    <span class="stat-label">Finished</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-pill">
+                    <span class="stat-num" id="statWant">0</span>
+                    <span class="stat-label">Wishlist</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-decoration">
+            <div class="floating-book book-a"></div>
+            <div class="floating-book book-b"></div>
+            <div class="floating-book book-c"></div>
+        </div>
+    </section>
 
-        <main id="bookGrid" class="book-grid">
-            <!-- Books will be injected here by JS -->
-        </main>
-    </div>
+    <!-- Filter Bar -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters" id="filterBar">
+                <button class="filter-btn active" data-filter="all">All Books</button>
+                <button class="filter-btn" data-filter="reading">📖 Reading</button>
+                <button class="filter-btn" data-filter="finished">✅ Finished</button>
+                <button class="filter-btn" data-filter="want">💫 Wishlist</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Grid -->
+    <main class="container">
+        <div class="book-grid" id="bookGrid">
+            <!-- Books injected by JS -->
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="empty-icon">📭</div>
+            <h3>No books here yet</h3>
+            <p>Add your first book to get started on your reading journey.</p>
+            <button class="btn-add-empty" onclick="document.getElementById('openModalBtn').click()">+ Add Your First Book</button>
+        </div>
+    </main>
+
+    <!-- Floating Add Button (mobile) -->
+    <button class="fab" id="fabBtn" title="Add Book">+</button>
 
     <!-- Add Book Modal -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content glass">
-            <h2 style="margin-bottom: 1.5rem;">Add New Book</h2>
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn">✕</button>
+            <div class="modal-header">
+                <span class="modal-icon">📖</span>
+                <h2>Add a New Book</h2>
+                <p>Track what you're reading or want to read</p>
+            </div>
             <form id="addBookForm">
                 <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" id="bookTitle" required>
+                    <label for="bookTitle">Book Title <span class="required">*</span></label>
+                    <input type="text" id="bookTitle" placeholder="e.g. The Midnight Library" required>
                 </div>
                 <div class="form-group">
-                    <label>Author</label>
-                    <input type="text" id="bookAuthor" required>
+                    <label for="bookAuthor">Author <span class="required">*</span></label>
+                    <input type="text" id="bookAuthor" placeholder="e.g. Matt Haig" required>
                 </div>
                 <div class="form-group">
-                    <label>Cover Image URL (Optional)</label>
-                    <input type="url" id="bookCover" placeholder="https://example.com/cover.jpg">
+                    <label for="bookCover">Cover Image URL <span class="optional">(optional)</span></label>
+                    <input type="url" id="bookCover" placeholder="https://...">
                 </div>
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button type="submit" class="btn-add" style="flex: 1;">Save Book</button>
-                    <button type="button" class="btn-add" id="closeModalBtn" style="flex: 1; background: transparent; border: 1px solid var(--glass-border);">Cancel</button>
+                <div class="form-group">
+                    <label>Reading Status</label>
+                    <div class="status-selector">
+                        <label class="status-option">
+                            <input type="radio" name="bookStatus" value="want" checked>
+                            <span class="status-label-btn">💫 Wishlist</span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="bookStatus" value="reading">
+                            <span class="status-label-btn">📖 Reading</span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="bookStatus" value="finished">
+                            <span class="status-label-btn">✅ Finished</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bookRating">Rating</label>
+                    <div class="star-input" id="starInput">
+                        <span class="star" data-val="1">★</span>
+                        <span class="star" data-val="2">★</span>
+                        <span class="star" data-val="3">★</span>
+                        <span class="star" data-val="4">★</span>
+                        <span class="star" data-val="5">★</span>
+                    </div>
+                    <input type="hidden" id="bookRating" value="0">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn-save">Save to Shelf</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Book Detail Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay">
+        <div class="drawer" id="bookDrawer">
+            <button class="drawer-close" id="closeDrawerBtn">✕</button>
+            <div id="drawerContent"></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>MY BOOK SELF &nbsp;·&nbsp; Built with ❤️ by <a href="https://github.com/AlpineTxt" target="_blank">AlpineTxt</a></p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
