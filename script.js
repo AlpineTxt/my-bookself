@@ -1,16 +1,6 @@
 // ─── Default Books ───
 const defaultBooks = [
     {
-        id: 1, title: "The Alchemist", author: "Paulo Coelho",
-        cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
-        status: "finished", rating: 5
-    },
-    {
-        id: 3, title: "Project Hail Mary", author: "Andy Weir",
-        cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1597695864i/54493401.jpg",
-        status: "want", rating: 0
-    },
-    {
         id: 4, title: "THAT ONE DAY", author: "Personal Collection",
         cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
         status: "reading", rating: 4,
