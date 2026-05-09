@@ -1,110 +1,72 @@
-// Initial Data
-const defaultBooks = [
+// ─── Your Books ───────────────────────────────────────────────
+const books = [
     {
         id: 1,
-        title: "The Alchemist",
-        author: "Paulo Coelho",
-        cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
-        status: "finished"
-    },
-    {
-        id: 3,
-        title: "Project Hail Mary",
-        author: "Andy Weir",
-        cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1597695864i/54493401.jpg",
-        status: "want"
-    },
-    {
-        id: 4,
         title: "THAT ONE DAY",
-        author: "Personal Collection",
         cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
-        status: "reading"
+        flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html",
+        buyUrl: ""
+    },
+    {
+        id: 2,
+        title: "সেই এক দিন",
+        cover: "ChatGPT Image May 6, 2026, 10_48_49 PM.png",
+        flipbookUrl: "https://heyzine.com/flip-book/2377ff2840.html",
+        buyUrl: ""
     }
 ];
 
-// State
-let books = JSON.parse(localStorage.getItem('myBookshelf')) || defaultBooks;
-
-// Ensure the new book is added if it's missing (for existing users)
-const existingBook = books.find(b => b.id === 4);
-if (!existingBook) {
-    books.push(defaultBooks.find(b => b.id === 4));
-} else {
-    existingBook.title = "THAT ONE DAY"; // Update title if it already exists
-}
-localStorage.setItem('myBookshelf', JSON.stringify(books));
-
-let currentFilter = 'all';
-
-// Selectors
-const bookGrid = document.getElementById('bookGrid');
+// ─── DOM ──────────────────────────────────────────────────────
+const grid       = document.getElementById('bookGrid');
 const searchInput = document.getElementById('searchInput');
+const emptyState  = document.getElementById('emptyState');
 
-// Functions
-function renderBooks() {
-    bookGrid.innerHTML = '';
-    
-    const searchTerm = searchInput.value.toLowerCase();
-    const filteredBooks = books.filter(book => {
-        return book.title.toLowerCase().includes(searchTerm) || 
-               book.author.toLowerCase().includes(searchTerm);
-    });
+// ─── Render ───────────────────────────────────────────────────
+function render() {
+    grid.innerHTML = '';
+    const term = searchInput.value.toLowerCase().trim();
+    const list = term ? books.filter(b => b.title.toLowerCase().includes(term)) : books;
 
-    if (filteredBooks.length === 0) {
-        bookGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-secondary);">
-                <p>No books found. Add some to your shelf!</p>
-            </div>
-        `;
+    if (list.length === 0) {
+        emptyState.style.display = 'block';
         return;
     }
+    emptyState.style.display = 'none';
 
-    filteredBooks.forEach((book, index) => {
+    list.forEach((book, i) => {
         const card = document.createElement('div');
         card.className = 'book-card';
-        card.style.animationDelay = `${index * 0.1}s`;
-        
+        card.style.animationDelay = `${i * 0.08}s`;
+
+        const coverSrc = book.cover || '';
+
         card.innerHTML = `
-            <div class="book-cover-container">
-                <img src="${book.cover || 'https://via.placeholder.com/220x320?text=No+Cover'}" alt="${book.title}" class="book-cover">
+            <div class="book-cover">
+                <img src="${coverSrc}" alt="${book.title}" loading="lazy"
+                     onerror="this.style.display='none'">
             </div>
-            <div class="book-details">
-                <h3 class="book-title">${book.title}</h3>
-                <p class="book-author">${book.author}</p>
-                <div class="card-actions" style="margin-top: 0.5rem;">
-                    <button class="btn-secondary" onclick="openReader('${book.title}', '${book.author}')">Read Now</button>
-                    <button class="btn-primary" onclick="openCheckout('${book.title}', '${book.author}')">Buy Now</button>
-                </div>
-            </div>
+            <h2 class="book-title">${book.title}</h2>
+            <button class="btn-read" onclick="readBook('${book.flipbookUrl}')">Read Now</button>
+            <button class="btn-buy"  onclick="buyBook('${book.buyUrl || ''}', '${encodeURIComponent(book.title)}')">Buy Now</button>
         `;
-        bookGrid.appendChild(card);
+        grid.appendChild(card);
     });
 }
 
-function saveBooks() {
-    localStorage.setItem('myBookshelf', JSON.stringify(books));
-    renderBooks();
+// ─── Actions ──────────────────────────────────────────────────
+function readBook(url) {
+    if (url) window.open(url, '_blank');
 }
-
-function deleteBook(id) {
-    if (confirm('Are you sure you want to remove this book?')) {
-        books = books.filter(b => b.id !== id);
-        saveBooks();
+function buyBook(url, title) {
+    if (url) {
+        window.open(url, '_blank');
+    } else {
+        window.open(`https://www.google.com/search?q=buy+${title}+book`, '_blank');
     }
 }
 
-searchInput.addEventListener('input', renderBooks);
+// ─── Search ───────────────────────────────────────────────────
+searchInput.addEventListener('input', render);
 
-function openReader(title, author) {
-    const url = `reader.html?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`;
-    window.location.href = url;
-}
-
-function openCheckout(title, author) {
-    const url = `checkout.html?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`;
-    window.location.href = url;
-}
-
-// Initial Render
-renderBooks();
+// ─── Init ─────────────────────────────────────────────────────
+render();
