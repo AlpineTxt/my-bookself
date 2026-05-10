@@ -19,7 +19,7 @@ const books = [
         title: "WHY WE STAY WHY WE LEAVE",
         author: "PRITAM B",
         cover: "WHY WE STAY WHY WE LEAVE.png",
-        flipbookUrl: "",
+        flipbookUrl: "https://heyzine.com/flip-book/3039b6c5cc.html",
         buyUrl: ""
     }
 ];
@@ -54,7 +54,7 @@ function render() {
                      onerror="this.style.display='none'">
             </div>
             <h2 class="book-title">${book.title}</h2>
-            <button class="btn-read" onclick="readBook('${book.flipbookUrl}')">Read Now</button>
+            <button class="btn-read" onclick="readBook(${i})">Read Now</button>
             <button class="btn-buy"  onclick="buyBook('${book.buyUrl || ''}', '${encodeURIComponent(book.title)}')">Buy Now</button>
         `;
         grid.appendChild(card);
@@ -62,8 +62,12 @@ function render() {
 }
 
 // ─── Actions ──────────────────────────────────────────────────
-function readBook(url) {
-    if (url) window.open(url, '_blank');
+function readBook(index) {
+    const book = books[index];
+    if (book && book.flipbookUrl) {
+        const url = `reader.html?flip=${encodeURIComponent(book.flipbookUrl)}&title=${encodeURIComponent(book.title)}&author=${encodeURIComponent(book.author || '')}`;
+        window.location.href = url;
+    }
 }
 function buyBook(url, title) {
     if (url) {
