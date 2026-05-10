@@ -13,6 +13,14 @@ const books = [
         cover: "ChatGPT Image May 6, 2026, 10_48_49 PM.png",
         flipbookUrl: "https://heyzine.com/flip-book/2377ff2840.html",
         buyUrl: ""
+    },
+    {
+        id: 3,
+        title: "WHY WE STAY WHY WE LEAVE",
+        author: "PRITAM B",
+        cover: "WHY WE STAY WHY WE LEAVE.png",
+        flipbookUrl: "",
+        buyUrl: ""
     }
 ];
 
