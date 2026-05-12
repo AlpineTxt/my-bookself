@@ -5,14 +5,14 @@ const books = [
         title: "THAT ONE DAY",
         cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
         flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html",
-        buyUrl: ""
+        buyUrl: "https://www.amazon.com/dp/B0H1GRGXNZ"
     },
     {
         id: 2,
         title: "সেই এক দিন",
         cover: "ChatGPT Image May 6, 2026, 10_48_49 PM.png",
         flipbookUrl: "https://heyzine.com/flip-book/2377ff2840.html",
-        buyUrl: ""
+        buyUrl: "https://www.amazon.co.uk/dp/B0H1GRGXNZ"
     },
     {
         id: 3,
@@ -20,7 +20,7 @@ const books = [
         author: "PRITAM B",
         cover: "WHY WE STAY WHY WE LEAVE.png",
         flipbookUrl: "https://heyzine.com/flip-book/3039b6c5cc.html",
-        buyUrl: ""
+        buyUrl: "https://www.amazon.com/dp/B0H1D2MPC7"
     }
 ];
 
