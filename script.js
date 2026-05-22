@@ -28,6 +28,46 @@ const books = [
         cover: "images.webp",
         flipbookUrl: "",
         buyUrl: "https://www.amazon.in/Alchemist-Paulo-Coelho/dp/8172234988?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&psc=1&smid=A1WYWER0W24N8S"
+    },
+    {
+        id: 5,
+        title: "ATOMIC HABITS",
+        author: "James Clear",
+        cover: "atomic-habits.jpg",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Atomic-Habits-James-Clear/dp/1847946240"
+    },
+    {
+        id: 6,
+        title: "TO KILL A MOCKINGBIRD",
+        author: "Harper Lee",
+        cover: "to-kill-a-mockingbird.jpg",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Kill-Mockingbird-Harper-Lee/dp/0446310786"
+    },
+    {
+        id: 7,
+        title: "THE LITTLE PRINCE",
+        author: "Antoine de Saint-Exupéry",
+        cover: "the-little-prince.jpg",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Little-Prince-Antoine-Saint-Exup%C3%A9ry/dp/0156012197"
+    },
+    {
+        id: 8,
+        title: "THE ADVENTURES OF SUPPANDI - VOL. 1",
+        author: "Tinkle Comics",
+        cover: "suppandi.jpg",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Adventures-Suppandi-1-Luis-Fernandes/dp/8189999001"
+    },
+    {
+        id: 9,
+        title: "BIRBAL THE WISE",
+        author: "Amar Chitra Katha",
+        cover: "birbal.jpg",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Birbal-Wise-Amar-Chitra-Katha/dp/8184820534"
     }
 ];
 
