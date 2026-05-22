@@ -17,7 +17,6 @@ const books = [
     {
         id: 3,
         title: "WHY WE STAY WHY WE LEAVE",
-       
         cover: "WHY WE STAY WHY WE LEAVE.png",
         flipbookUrl: "https://heyzine.com/flip-book/3039b6c5cc.html",
         buyUrl: "https://www.amazon.com/dp/B0H1D2MPC7"
