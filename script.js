@@ -3,14 +3,14 @@ const books = [
     {
         id: 1,
         title: "THAT ONE DAY",
-        cover: "Image May 6, 2026, 10_49_19 PM.png",
+        cover: "that-one-day.png",
         flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html",
         buyUrl: "https://www.amazon.com/dp/B0H1GRGXNZ"
     },
     {
         id: 2,
         title: "সেই এক দিন",
-        cover: "Image May 6, 2026, 10_48_49 PM.png",
+        cover: "sei-ek-din.png",
         flipbookUrl: "https://heyzine.com/flip-book/2377ff2840.html",
         buyUrl: "https://www.amazon.co.uk/dp/B0H1GRGXNZ"
     },
@@ -62,7 +62,8 @@ function render() {
                      onerror="this.style.display='none'">
             </div>
             <h2 class="book-title">${book.title}</h2>
-            <button class="btn-read" onclick="readBook(${i})">Read Now</button>
+            ${book.author ? `<p class="book-author">${book.author}</p>` : ''}
+            ${book.flipbookUrl ? `<button class="btn-read" onclick="readBook(${i})">Read Now</button>` : ''}
             <button class="btn-buy"  onclick="buyBook('${book.buyUrl || ''}', '${encodeURIComponent(book.title)}')">Buy Now</button>
         `;
         grid.appendChild(card);
