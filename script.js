@@ -3,14 +3,14 @@ const books = [
     {
         id: 1,
         title: "THAT ONE DAY",
-        cover: "ChatGPT Image May 6, 2026, 10_49_19 PM.png",
+        cover: "Image May 6, 2026, 10_49_19 PM.png",
         flipbookUrl: "https://heyzine.com/flip-book/05d20dcb10.html",
         buyUrl: "https://www.amazon.com/dp/B0H1GRGXNZ"
     },
     {
         id: 2,
         title: "সেই এক দিন",
-        cover: "ChatGPT Image May 6, 2026, 10_48_49 PM.png",
+        cover: "Image May 6, 2026, 10_48_49 PM.png",
         flipbookUrl: "https://heyzine.com/flip-book/2377ff2840.html",
         buyUrl: "https://www.amazon.co.uk/dp/B0H1GRGXNZ"
     },
@@ -21,6 +21,14 @@ const books = [
         cover: "WHY WE STAY WHY WE LEAVE.png",
         flipbookUrl: "https://heyzine.com/flip-book/3039b6c5cc.html",
         buyUrl: "https://www.amazon.com/dp/B0H1D2MPC7"
+    },  
+    {
+        id: 4,
+        title: "THE ALCHEMIST",
+        author: "Paulo Coelho",
+        cover: "images.webp",
+        flipbookUrl: "",
+        buyUrl: "https://www.amazon.in/Alchemist-Paulo-Coelho/dp/8172234988?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&psc=1&smid=A1WYWER0W24N8S"
     }
 ];
 
